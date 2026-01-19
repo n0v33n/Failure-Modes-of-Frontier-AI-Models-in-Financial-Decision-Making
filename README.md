@@ -1,10 +1,7 @@
-![image1][image1]Finance 
-
+![Finance chart or screenshot](Images/image1.png)Finance
 # **REPORT TITLE**
 
 ## Failure Modes of Frontier AI Models in Financial Decision-Making
-
-![][image2]
 
 # 
 
@@ -48,7 +45,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 
 # **Failure Modes Taxonomy**
 
-![][image3]
+![Finance chart or screenshot](Images/image2.png)
 
 **Figure-1**:Taxonomy of the failure modes
 
@@ -64,7 +61,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 
 ### **Why It Happens (Mechanisms – Flow Diagram)**
 
-![][image4]
+![Finance chart or screenshot](Images/image3.png)
 
 **Figure-2:** FM1: Hallucinations / Factual Errors
 
@@ -99,7 +96,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 
 ### **Why It Happens (Mechanisms – Flow Diagram)**
 
-![][image5]
+![Finance chart or screenshot](Images/image4.png)
 
 **Figure-3:**FM 2: Contextual & Long-Context Reasoning Failures
 
@@ -133,7 +130,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 
 ### **Why It Happens (Mechanisms – Flow Diagram)**
 
-![][image6]
+![Finance chart or screenshot](Images/image5.png)
 
 **Figure-4** :FM 3: Overconfidence / Calibration Errors
 
@@ -165,7 +162,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 
 ### **Why It Happens (Mechanisms – Flow Diagram)**
 
-![][image7]
+![Finance chart or screenshot](Images/image6.png)
 
 **Figure-5:** FM 4: Brittleness to Adversarial Prompts
 
@@ -201,8 +198,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 
 ### **Why It Happens (Mechanisms – Flow Diagram)**
 
-![][image8]
-
+![Finance chart or screenshot](Images/image7.png)
 **Figure-6: FM 5: Unsafe Recommendations / Compliance Failures**
 
 ### **Contributing factors:**
@@ -237,7 +233,8 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 
 ### **Why It Happens (Mechanisms – Flow Diagram)**
 
-![][image9]
+![Finance chart or screenshot](Images/image8.png)
+
 
 **Figure-7:** FM 6: Multimodal / Table Hallucination
 
@@ -272,7 +269,8 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 
 ### **Why It Happens (Mechanisms – Flow Diagram)**
 
-![][image10]
+![Finance chart or screenshot](Images/image9.png)
+
 
 **Figure-8:** FM 7: Agentic Loop & Coordination Failures
 
@@ -307,7 +305,8 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 
 ### **Why It Happens (Mechanisms – Flow Diagram)**
 
-![][image11]
+![Finance chart or screenshot](Images/image10.png)
+
 
 **Figure-9:** FM 8: Prompt Sensitivity & Manipulation
 
@@ -390,7 +389,8 @@ We use three stages: (A) Grounded SFT, (B) Calibration & Abstention fine-tune, (
 * sim\_max(x) \= max retrieval similarity among E chunks  
 * 1\[·\] indicator
 
-  ![][image12]
+![Finance chart or screenshot](Images/image11.png)
+
 
   **Figure-10 :** 3-step Training strategy
 
@@ -470,7 +470,8 @@ Use PPO to update θ to maximize expected reward,
 
 with a KL penalty to keep the policy close to the pretrained model.
 
-![][image13]
+![Finance chart or screenshot](Images/image12.png)
+
 
 **Figure-11:** Arch.. flow for the training strategy
 
