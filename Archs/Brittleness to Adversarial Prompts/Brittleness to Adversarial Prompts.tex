@@ -1,0 +1,97 @@
+\documentclass[tikz,border=5pt]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, shadows.blur, calc, fit, backgrounds}
+
+% --- Professional Colors ---
+\definecolor{surfaceGreen}{RGB}{39, 174, 96}    % Surface Level / Input
+\definecolor{boundaryBlue}{RGB}{64, 112, 175}   % Decision Boundary
+\definecolor{vulnRed}{RGB}{214, 69, 65}         % Vulnerability (Sensitivity/Adversarial)
+\definecolor{instabilityPurple}{RGB}{142, 68, 173} % Final Instability
+
+% --- Global Style Definitions (Prevents Compile Errors) ---
+\tikzset{
+    % Base Block Style
+    process/.style={
+        rectangle, 
+        rounded corners=2mm, 
+        minimum width=3.8cm,      
+        minimum height=1.0cm,     
+        text centered, 
+        text width=3.5cm,         
+        font=\sffamily\footnotesize, 
+        draw=gray!40,
+        thick,
+        blur shadow={shadow blur steps=3}
+    },
+    % Specific Role Styles
+    stepInput/.style={process, fill=surfaceGreen!10, draw=surfaceGreen!80!black},
+    stepMech/.style={process, fill=boundaryBlue!10, draw=boundaryBlue!80!black},
+    stepVuln/.style={process, fill=vulnRed!10, draw=vulnRed!80!black},
+    stepResult/.style={process, fill=instabilityPurple!10, draw=instabilityPurple!80!black},
+    % Arrow & Label Styles
+    arrow/.style={-{Stealth}, thick, draw=gray!60, rounded corners},
+    groupLabel/.style={font=\bfseries\sffamily\tiny, color=gray!70, anchor=north west}
+}
+
+\begin{document}
+
+\begin{tikzpicture}[
+    transform shape, 
+    scale=0.85, 
+    node distance=0.8cm and 1.2cm
+]
+
+    % --- LEFT COLUMN (Semantic Fragility) ---
+    
+    % 1. Surface Level
+    \node (step1) [stepInput] {
+        \textbf{Surface-Level} \\ 
+        Semantic Reliance
+    };
+
+    % 2. Sharp Boundaries
+    \node (step2) [stepMech, below=of step1] {
+        \textbf{Sharp Decision} \\ 
+        Boundaries
+    };
+
+    % 3. Sensitivity
+    \node (step3) [stepVuln, below=of step2] {
+        \textbf{Sensitivity to} \\ 
+        Paraphrase / Wording
+    };
+
+    % --- RIGHT COLUMN (Exploitation & Failure) ---
+    
+    % 4. Adversarial (Bridge to Right)
+    \node (step4) [stepVuln, right=of step3] {
+        \textbf{Adversarial Trigger} \\ 
+        Exploitation
+    };
+
+    % 5. Instability (Top Right - Moving Up)
+    \node (step5) [stepResult, above=of step4] {
+        \textbf{Output} \\ 
+        Instability
+    };
+
+    % --- Arrows (The U-Shape) ---
+    \draw [arrow] (step1) -- (step2);
+    \draw [arrow] (step2) -- (step3);
+    \draw [arrow] (step3) -- (step4); % Crossing over
+    \draw [arrow] (step4) -- (step5); % Moving Up
+
+    % --- Background Grouping ---
+    \begin{scope}[on background layer]
+        % Group 1: The structural weakness
+        \node [fit=(step1)(step3), fill=gray!5, draw=gray!20, rounded corners, dashed, inner sep=8pt] (groupL) {};
+        \node [groupLabel] at (groupL.north west) {STRUCTURAL FRAGILITY};
+        
+        % Group 2: The consequence
+        \node [fit=(step4)(step5), fill=gray!5, draw=gray!20, rounded corners, dashed, inner sep=8pt] (groupR) {};
+        \node [groupLabel] at (groupR.north west) {SYSTEM FAILURE};
+    \end{scope}
+
+\end{tikzpicture}
+\end{document}
