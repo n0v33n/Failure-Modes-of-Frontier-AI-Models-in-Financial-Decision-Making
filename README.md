@@ -1,4 +1,4 @@
-![][image1]Finance 
+![image1][image1]Finance 
 
 # **REPORT TITLE**
 
