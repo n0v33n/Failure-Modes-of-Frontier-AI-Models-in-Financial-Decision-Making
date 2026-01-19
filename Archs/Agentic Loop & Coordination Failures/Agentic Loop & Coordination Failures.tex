@@ -1,0 +1,90 @@
+\documentclass[tikz,border=5pt]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, shadows.blur, calc, fit, backgrounds}
+
+% --- Professional Colors ---
+\definecolor{agentTeal}{RGB}{22, 160, 133}      % Decomposition/Structure
+\definecolor{gapRed}{RGB}{214, 69, 65}          % Missing Termination (Critical Gap)
+\definecolor{propOrange}{RGB}{230, 126, 34}     % Error Propagation (Active Issue)
+\definecolor{loopPurple}{RGB}{142, 68, 173}     % Amplification (Final Outcome)
+
+% --- Global Style Definitions (Prevents Compile Errors) ---
+\tikzset{
+    % Base Block Style
+    process/.style={
+        rectangle, 
+        rounded corners=2mm, 
+        minimum width=3.8cm,      
+        minimum height=1.0cm,     
+        text centered, 
+        text width=3.5cm,         
+        font=\sffamily\footnotesize, 
+        draw=gray!40,
+        thick,
+        blur shadow={shadow blur steps=3}
+    },
+    % Specific Role Styles
+    stepAgent/.style={process, fill=agentTeal!10, draw=agentTeal!80!black},
+    stepGap/.style={process, fill=gapRed!10, draw=gapRed!80!black},
+    stepProp/.style={process, fill=propOrange!10, draw=propOrange!80!black},
+    stepLoop/.style={process, fill=loopPurple!10, draw=loopPurple!80!black},
+    % Arrow & Label Styles
+    arrow/.style={-{Stealth}, thick, draw=gray!60, rounded corners},
+    groupLabel/.style={font=\bfseries\sffamily\tiny, color=gray!70, anchor=north west}
+}
+
+\begin{document}
+
+\begin{tikzpicture}[
+    transform shape, 
+    scale=0.85, 
+    node distance=0.8cm and 1.2cm
+]
+
+    % --- LEFT COLUMN (Design & Control) ---
+    
+    % 1. Decomposition (Top Left)
+    \node (step1) [stepAgent] {
+        \textbf{Autonomous Agent} \\ 
+        Decomposition
+    };
+
+    % 2. Termination Gap (Bottom Left)
+    \node (step2) [stepGap, below=of step1] {
+        \textbf{No Robust} \\ 
+        Termination Conditions
+    };
+
+    % --- RIGHT COLUMN (Runaway Effects) ---
+    
+    % 3. Propagation (Bottom Right - Across from Step 2)
+    \node (step3) [stepProp, right=of step2] {
+        \textbf{Inter-Agent Error} \\ 
+        Propagation
+    };
+
+    % 4. Amplification (Top Right - Above Step 3)
+    \node (step4) [stepLoop, above=of step3] {
+        \textbf{Execution Loop} \\ 
+        Amplification
+    };
+
+    % --- Arrows (The U-Shape / Open Loop) ---
+    \draw [arrow] (step1) -- (step2);  % Down
+    \draw [arrow] (step2) -- (step3);  % Across
+    \draw [arrow] (step3) -- (step4);  % Up
+
+    % --- Background Grouping ---
+    \begin{scope}[on background layer]
+        % Group 1: The Control Layer
+        \node [fit=(step1)(step2), fill=gray!5, draw=gray!20, rounded corners, dashed, inner sep=8pt] (groupL) {};
+        \node [groupLabel] at (groupL.north west) {CONTROL DEFICIENCY};
+        
+        % Group 2: The Cascading Failure
+        \node [fit=(step3)(step4), fill=gray!5, draw=gray!20, rounded corners, dashed, inner sep=8pt] (groupR) {};
+        \node [groupLabel] at (groupR.north west) {CASCADING FAILURE};
+    \end{scope}
+
+\end{tikzpicture}
+\end{document}
