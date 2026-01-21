@@ -45,7 +45,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 
 ![Finance chart or screenshot](Images/image2.png)
 
-**Figure-1**:Taxonomy of the failure modes
+**Figure-1** :Taxonomy of the failure modes
 
 ## **FM1: Hallucinations / Factual Errors**
 
@@ -96,7 +96,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 
 ![Finance chart or screenshot](Images/image4.png)
 
-**Figure-3:**FM 2: Contextual & Long-Context Reasoning Failures
+**Figure-3:** FM 2: Contextual & Long-Context Reasoning Failures
 
 **Contributing factors:** Context window limits, Retrieval granularity mismatch, Weak symbolic & numerical reasoning, Position bias in long inputs
 
@@ -197,7 +197,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 ### **Why It Happens (Mechanisms – Flow Diagram)**
 
 ![Finance chart or screenshot](Images/image7.png)
-**Figure-6: FM 5: Unsafe Recommendations / Compliance Failures**
+**Figure-6:** FM 5: Unsafe Recommendations / Compliance Failures
 
 ### **Contributing factors:**
 
