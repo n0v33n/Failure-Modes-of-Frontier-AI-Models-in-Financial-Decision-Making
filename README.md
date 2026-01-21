@@ -11,7 +11,7 @@ Large language models (LLMs) and their extensions to multimodal and agentic syst
 
 Drawing on recent empirical studies, we categorize common failure patterns, examine their underlying causes, and assess their potential impact on financial decision-making. By focusing on failure mechanisms rather than raw model capabilities, this work aims to inform the design of more robust data, training, and evaluation strategies for trustworthy AI deployment in finance.
 
-# *“We define a failure mode as a systematic and reproducible pattern of incorrect, unsafe, or misleading model behavior that arises under identifiable conditions, persists across inputs or deployments, and can be traced to underlying limitations in model design, training data, optimization objectives, or system integration. Unlike isolated errors, failure modes manifest as structured breakdowns in model reliability such as hallucination, miscalibration, or brittleness\\ that are predictable in form even if stochastic in occurrence.*
+ *“We define a failure mode as a systematic and reproducible pattern of incorrect, unsafe, or misleading model behavior that arises under identifiable conditions, persists across inputs or deployments, and can be traced to underlying limitations in model design, training data, optimization objectives, or system integration. Unlike isolated errors, failure modes manifest as structured breakdowns in model reliability such as hallucination, miscalibration, or brittleness\\ that are predictable in form even if stochastic in occurrence.*
 
 # **Literature Research**
 
