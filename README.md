@@ -326,6 +326,8 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 
 **Table-9:** LR for FM8
 
+### Resolution Techq
+
 | Failure Mode (FM)                          | Key Characteristics / Impact in Finance                          | Primary Solutions / Mitigations                                                                 | Key Techniques & Evidence Sources (2024–2026) |
 |--------------------------------------------|------------------------------------------------------------------|--------------------------------------------------------------------------------------------------|-----------------------------------------------|
 | **FM1: Hallucinations / Factual Errors**  | Fabricating revenues, ratios, definitions; high risk in analysis, compliance, reporting | - Retrieval-Augmented Generation (RAG) with high-quality financial sources<br>- Grounded fine-tuning + abstention training<br>- Domain-specific fine-tuning on verified filings/transcripts<br>- Post-processing verification (NLI/entailment checkers) | RAG reduces by 60–80% (Turing, Master of Code); Finance-specific RAG (Zhao et al., Wang et al.); Abstention + RLHF (report proposal); Domain fine-tuning (BizTech, Baytech) |
