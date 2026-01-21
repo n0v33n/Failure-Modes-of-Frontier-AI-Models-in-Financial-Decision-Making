@@ -3,8 +3,6 @@
 
 ## Failure Modes of Frontier AI Models in Financial Decision-Making
 
-# 
-
 # **Introduction**
 
 Large language models (LLMs) and their extensions to multimodal and agentic systems are increasingly being adopted in financial workflows, including financial analysis, regulatory compliance, investment advisory, and automated trading. While recent advances have demonstrated impressive capabilities in natural language understanding and reasoning, emerging evidence suggests that these systems exhibit systematic failure modes when deployed in high-stakes financial settings. Errors such as hallucinated financial facts, brittle reasoning over long documents, overconfident yet incorrect predictions, and unsafe or non-compliant recommendations raise serious concerns about the reliability and safety of current frontier models in practice.
@@ -65,7 +63,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 
 **Figure-2:** FM1: Hallucinations / Factual Errors
 
-**Contributing factors :**Knowledge cutoffs, Distribution shift (older firms, niche financial terms), No abstention mechanism, Weak grounding even with retrieved context
+**Contributing factors :** Knowledge cutoffs, Distribution shift (older firms, niche financial terms), No abstention mechanism, Weak grounding even with retrieved context
 
 ### **Impact Severity (High to Very High )**
 
@@ -82,7 +80,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 | Xu et al., 2024 \[3\] | ≥58% hallucination rate on legal/financial queries |
 | Ji et al., 2024 \[4\] | RAG-LLMs hallucinate unsupported claims even with relevant retrieved chunks |
 
-**Table-2:**LR for FM1
+**Table-2:** LR for FM1
 
 ## **FM 2: Contextual & Long-Context Reasoning Failures**
 
@@ -116,7 +114,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 | **Chen et al., 2024 \[6\]** | LLMs confuse facts across distant sections in long reports |
 | **Ji et al., 2024 \[4\]** | Hallucinations persist even when correct context exists |
 
-**Table-3:**LR for FM2
+**Table-3:** LR for FM2
 
 ## **FM 3: Overconfidence / Calibration Errors**
 
@@ -149,7 +147,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 | **Yoo, 2025 \[7\]** | Large ECE gaps. high confidence on wrong sentiment predictions |
 | **Dou et al., 2025 \[8\]** | LLM claimed 95% confidence on incorrect finance exam answers |
 
-**Table-4:**LR for FM3
+**Table-4:** LR for FM3
 
 ## **FM 4: Brittleness to Adversarial Prompts**
 
@@ -181,7 +179,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 
 ### **Evidence from Literature**
 
-**Table-5:**LR for FM4
+**Table-5:** LR for FM4
 
 | Study | Evidence |
 | ----- | ----- |
@@ -219,7 +217,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 | Study | Evidence |
 | ----- | ----- |
 | **Hui et al., 2025 \[10\]** | LLM advised using insider information for trading |
-**Table-6:**LR for FM5
+**Table-6:** LR for FM5
 
 ## **FM 6: Multimodal / Table Hallucination**
 
@@ -252,7 +250,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 
 ### **Evidence from Literature**
 
-**Table-7:**LR for FM6
+**Table-7:** LR for FM6
 
 | Study | Evidence |
 | ----- | ----- |
@@ -290,7 +288,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 | ----- | ----- |
 | **Xiao et al., 2024 \[12\]** | Multi-agent system amplified position **47×** due to loop |
 
-**Table-8:**LR for FM7
+**Table-8:** LR for FM7
 
 ## **FM 8: Prompt Sensitivity & Manipulation**
 
@@ -326,9 +324,7 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 | ----- | ----- |
 | **Turetken & Leippold, 2024 \[13\]** | Prompt manipulation flipped neutral earnings to buy signals |
 
-**Table-9:**LR for FM8\\
-
-# 
+**Table-9:** LR for FM8
 
 # **Mini proposal to reduce Hallucinations / Factual Errors in LLMs in Financial Settings (using** Ayala & Bechard (2024)\[15\]**)** 
 
