@@ -219,7 +219,6 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 | Study | Evidence |
 | ----- | ----- |
 | **Hui et al., 2025 \[10\]** | LLM advised using insider information for trading |
-
 **Table-6:**LR for FM5
 
 ## **FM 6: Multimodal / Table Hallucination**
@@ -270,8 +269,6 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 ### **Why It Happens (Mechanisms – Flow Diagram)**
 
 ![Finance chart or screenshot](Images/image9.png)
-
-
 **Figure-8:** FM 7: Agentic Loop & Coordination Failures
 
 ### **Contributing factors:**
@@ -393,83 +390,92 @@ We use three stages: (A) Grounded SFT, (B) Calibration & Abstention fine-tune, (
 
 
   **Figure-10 :** 3-step Training strategy
+### (A) Grounded Supervised Fine-Tuning (SFT)
 
-**(A) Grounded Supervised Fine-Tuning (SFT)**
-
-Train the model to produce answers conditioned on evidence.
+Train the model to produce answers conditioned on retrieved evidence.
 
 **Standard SFT loss**:
 
-L\_SFT(θ) \= − E\_{(x, y)} \[ log p\_θ(y | x) \]
+$$
+\mathcal{L}_{\text{SFT}}(\theta) = -\mathbb{E}_{(x,y)} \left[ \log p_\theta(y \mid x) \right]
+$$
 
-Augment with a grounding penalty for unsupported answers
+Augment with a grounding penalty for unsupported answers  
+(automatically applied during training using the provided labels):
 
-(automatic during training using labels):
+$$
+\mathcal{L}_{\text{ground}}(\theta) = \mathcal{L}_{\text{SFT}}(\theta) + \lambda_u \cdot \mathbb{E}_{(x,y)} \left[ \mathbb{1}[L = \text{UNSUPPORTED}] \cdot \ell_{\text{pen}}\bigl(p_\theta(\text{answer} \mid x)\bigr) \right]
+$$
 
-L\_ground(θ) \= L\_SFT(θ) \+ λ\_u · E\_{(x, y)} \[\[L \= UNSUPPORTED\] · ℓ\_pen(p\_θ(answer | x)) \]
+where $\ell_{\text{pen}}(\cdot)$ is a penalty term that discourages high confidence on unsupported answers.
 
-where ℓ\_pen(·) is a penalty that discourages confidence in unsupported answers.
+Example penalty function:
 
-Ex: ℓ\_pen(p) \= − log(1 − p)
+$$
+\ell_{\text{pen}}(p) = -\log(1 - p)
+$$
 
-This forces the model to avoid assigning high probability to an answer
+This encourages the model to assign low probability to any concrete answer when $L = \text{UNSUPPORTED}$, effectively shifting probability mass toward **ABSTAIN**.
 
-when the label is UNSUPPORTED, pushing probability mass toward ABSTAIN.
+**Hyperparameter**: $\lambda_u \in [1.0, 5.0]$ (tune on a validation set)
 
-**Hyperparameter**: λ\_u ∈ \[1.0, 5.0\]  (tune on validation)
+### (B) Abstention-aware Objective
 
-**(B) Abstention-aware Objective**
+Introduce a special **ABSTAIN** token. The training data contains both normal answer examples and examples where the correct behavior is to abstain.
 
-Introduce a special ABSTAIN token. Train on a mix of standard supervised
+The model learns a binary decision: output **ABSTAIN** or produce an answer.
 
-examples and abstention examples.
+**Training objective (cross-entropy)**:
 
-Binary decision: the model chooses ABSTAIN vs. answer.
+$$
+\mathcal{L}_{\text{abst}}(\theta) = -\mathbb{E} \Biggl[ 
+\mathbb{1}[L = \text{INSUFFICIENT}] \cdot \log p_\theta(\text{ABSTAIN} \mid x)
++ \mathbb{1}[L \neq \text{INSUFFICIENT}] \cdot \log p_\theta(\neg \text{ABSTAIN} \mid x)
+\Biggr]
+$$
 
-**Train using cross-entropy:**
+**Inference-time abstention rule** with confidence threshold $\tau$:
 
-L\_abst \= − E \[ 1\[L \= INSUFFICIENT\] · log p\_θ(ABSTAIN | x)+ 1\[L ≠ INSUFFICIENT\] · logp\_θ(not\_ABSTAIN | x)\]
+$$
+\text{ABSTAIN if } p_\theta(\text{ABSTAIN} \mid x) > \tau
+$$
 
-Inference-time abstention rule with threshold τ:
+The threshold $\tau$ controls the coverage–safety trade-off.  
+Higher $\tau$ → fewer answers, but lower hallucination risk.  
+Typical range for high-stakes domains (e.g. finance, legal): $\tau \approx 0.6 - 0.8$.
 
-ABSTAIN if
+Tune $\tau$ to achieve high **abstention precision** on a held-out set.
 
-    p\_θ(ABSTAIN | x) \> τ
+### (C) RLHF / PPO with Factuality Reward
 
-The threshold τ trades off answer coverage vs. hallucination risk.
+Define a scalar reward $R$ per response that rewards grounding and correct abstention.
 
-Tune τ to achieve high precision of abstention
+First, compute an entailment/verifier score using a small NLI model (fine-tuned on domain-specific financial entailment):
 
-(e.g., τ ≈ 0.6–0.8 for finance or other high-risk domains).
+$$
+s_{\text{ent}} = p_{\text{entail}}(y \mid E) \in [0,1]
+$$
 
-**(C) RLHF / PPO with Factuality Reward**
+**Reward function**:
 
-Define a per-response reward R that captures grounding and correct abstention.
+$$
+R = \alpha \cdot s_{\text{ent}} - \beta \cdot (1 - s_{\text{ent}}) \cdot \mathbb{1}[\text{model produced a factual claim}]
+   + \gamma \cdot \mathbb{1}[\text{correctly abstained}]
+$$
 
-First compute verifier entailment score:
+**More explicit / commonly used form**:
 
-s\_ent \= p\_entail(y | E) ∈ \[0, 1\] (using a small NLI model fine-tuned on financial entailment)
+$$
+R = \alpha \cdot s_{\text{ent}} - \beta \cdot (1 - s_{\text{ent}}) \cdot \mathbb{1}[\text{answered}] + \gamma \cdot \mathbb{1}[\text{abstained and } L = \text{INSUFFICIENT}]
+$$
 
-**Reward definition**:
+**Hyperparameters** (starting points – tune via reward-model validation):
 
-R \= α · s\_ent− β · (1 − s\_ent) · 1\[model produced a factual claim\] \+ γ · 1\[correct abstain\]
+- $\alpha$ = reward for well-supported answers (e.g. 1.0–2.0)  
+- $\beta$  = strong penalty for unsupported / hallucinated answers (e.g. 3.0–6.0, higher in finance)  
+- $\gamma$ = bonus for correct abstention (e.g. 1.5–3.0)
 
-Simplified form:
-
-R \= α · s\_ent − β · (1 − s\_ent) · 1\[answered\] \+ γ · 1\[abstained and L \= INSUFFICIENT\]
-
-**Hyperparameters**:
-
-α \= reward for entailed answers (e.g., 1.0)
-
-β \= penalty for unsupported answered claims (e.g., 3.0–5.0, higher for finance)
-
-γ \= bonus for correct abstention (e.g., 2.0)
-
-Use PPO to update θ to maximize expected reward,
-
-with a KL penalty to keep the policy close to the pretrained model.
-
+Use **PPO** (or another RL algorithm) to maximize expected reward under a KL-divergence constraint that keeps the policy close to the SFT reference model.
 ![Finance chart or screenshot](Images/image12.png)
 
 
