@@ -393,81 +393,91 @@ We use three stages: (A) Grounded SFT, (B) Calibration & Abstention fine-tune, (
 
 
   **Figure-10 :** 3-step Training strategy
-
-**(A) Grounded Supervised Fine-Tuning (SFT)**
+### (A) Grounded Supervised Fine-Tuning (SFT)
 
 Train the model to produce answers conditioned on evidence.
 
 **Standard SFT loss**:
 
-L\_SFT(θ) \= − E\_{(x, y)} \[ log p\_θ(y | x) \]
+$$
+\mathcal{L}_{\text{SFT}}(\theta) = -\mathbb{E}_{(x,y)} \left[ \log p_\theta(y \mid x) \right]
+$$
 
-Augment with a grounding penalty for unsupported answers
-
+Augment with a grounding penalty for unsupported answers  
 (automatic during training using labels):
 
-L\_ground(θ) \= L\_SFT(θ) \+ λ\_u · E\_{(x, y)} \[\[L \= UNSUPPORTED\] · ℓ\_pen(p\_θ(answer | x)) \]
+$$
+\mathcal{L}_{\text{ground}}(\theta) = \mathcal{L}_{\text{SFT}}(\theta) + \lambda_u \cdot \mathbb{E}_{(x,y)} \Bigl[ \mathbb{1}[L = \text{UNSUPPORTED}] \cdot \ell_{\text{pen}}(p_\theta(\text{answer} \mid x)) \Bigr]
+$$
 
-where ℓ\_pen(·) is a penalty that discourages confidence in unsupported answers.
+where $\ell_{\text{pen}}(\cdot)$ is a penalty that discourages confidence in unsupported answers.
 
-Ex: ℓ\_pen(p) \= − log(1 − p)
+Example:
 
-This forces the model to avoid assigning high probability to an answer
+$$
+\ell_{\text{pen}}(p) = -\log(1 - p)
+$$
 
-when the label is UNSUPPORTED, pushing probability mass toward ABSTAIN.
+This forces the model to avoid assigning high probability to an answer when the label is **UNSUPPORTED**, pushing probability mass toward **ABSTAIN**.
 
-**Hyperparameter**: λ\_u ∈ \[1.0, 5.0\]  (tune on validation)
+**Hyperparameter**: $\lambda_u \in [1.0, 5.0]$ (tune on validation)
 
-**(B) Abstention-aware Objective**
+### (B) Abstention-aware Objective
 
-Introduce a special ABSTAIN token. Train on a mix of standard supervised
+Introduce a special **ABSTAIN** token. Train on a mix of standard supervised examples and abstention examples.
 
-examples and abstention examples.
+Binary decision: the model chooses **ABSTAIN** vs. answer.
 
-Binary decision: the model chooses ABSTAIN vs. answer.
+**Train using cross-entropy**:
 
-**Train using cross-entropy:**
+$$
+\mathcal{L}_{\text{abst}} = -\mathbb{E} \Bigl[ 
+\mathbb{1}[L = \text{INSUFFICIENT}] \cdot \log p_\theta(\text{ABSTAIN} \mid x) 
++ \mathbb{1}[L \neq \text{INSUFFICIENT}] \cdot \log p_\theta(\neg \text{ABSTAIN} \mid x)
+\Bigr]
+$$
 
-L\_abst \= − E \[ 1\[L \= INSUFFICIENT\] · log p\_θ(ABSTAIN | x)+ 1\[L ≠ INSUFFICIENT\] · logp\_θ(not\_ABSTAIN | x)\]
+**Inference-time abstention rule** with threshold $\tau$:
 
-Inference-time abstention rule with threshold τ:
+$$
+\text{ABSTAIN if } p_\theta(\text{ABSTAIN} \mid x) > \tau
+$$
 
-ABSTAIN if
+The threshold $\tau$ trades off answer coverage vs. hallucination risk.  
+Tune $\tau$ to achieve high precision of abstention  
+(e.g., $\tau \approx 0.6-0.8$ for finance or other high-risk domains).
 
-    p\_θ(ABSTAIN | x) \> τ
+### (C) RLHF / PPO with Factuality Reward
 
-The threshold τ trades off answer coverage vs. hallucination risk.
-
-Tune τ to achieve high precision of abstention
-
-(e.g., τ ≈ 0.6–0.8 for finance or other high-risk domains).
-
-**(C) RLHF / PPO with Factuality Reward**
-
-Define a per-response reward R that captures grounding and correct abstention.
+Define a per-response reward $R$ that captures grounding and correct abstention.
 
 First compute verifier entailment score:
 
-s\_ent \= p\_entail(y | E) ∈ \[0, 1\] (using a small NLI model fine-tuned on financial entailment)
+$$
+s_{\text{ent}} = p_{\text{entail}}(y \mid E) \in [0,1]
+$$
+
+(using a small NLI model fine-tuned on financial entailment)
 
 **Reward definition**:
 
-R \= α · s\_ent− β · (1 − s\_ent) · 1\[model produced a factual claim\] \+ γ · 1\[correct abstain\]
+$$
+R = \alpha \cdot s_{\text{ent}} - \beta \cdot (1 - s_{\text{ent}}) \cdot \mathbb{1}[\text{model produced a factual claim}] + \gamma \cdot \mathbb{1}[\text{correct abstain}]
+$$
 
-Simplified form:
+**Simplified / common form**:
 
-R \= α · s\_ent − β · (1 − s\_ent) · 1\[answered\] \+ γ · 1\[abstained and L \= INSUFFICIENT\]
+$$
+R = \alpha \cdot s_{\text{ent}} - \beta \cdot (1 - s_{\text{ent}}) \cdot \mathbb{1}[\text{answered}] + \gamma \cdot \mathbb{1}[\text{abstained and } L = \text{INSUFFICIENT}]
+$$
 
 **Hyperparameters**:
 
-α \= reward for entailed answers (e.g., 1.0)
+- $\alpha$ = reward for entailed answers (e.g. 1.0)  
+- $\beta$  = penalty for unsupported answered claims (e.g. 3.0–5.0, higher for finance)  
+- $\gamma$ = bonus for correct abstention (e.g. 2.0)
 
-β \= penalty for unsupported answered claims (e.g., 3.0–5.0, higher for finance)
-
-γ \= bonus for correct abstention (e.g., 2.0)
-
-Use PPO to update θ to maximize expected reward,
-
+Use PPO to update $\theta$ to maximize expected reward,  
 with a KL penalty to keep the policy close to the pretrained model.
 
 ![Finance chart or screenshot](Images/image12.png)
