@@ -234,8 +234,6 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 ### **Why It Happens (Mechanisms – Flow Diagram)**
 
 ![Finance chart or screenshot](Images/image8.png)
-
-
 **Figure-7:** FM 6: Multimodal / Table Hallucination
 
 ### **Contributing factors:**
@@ -270,8 +268,6 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 ### **Why It Happens (Mechanisms – Flow Diagram)**
 
 ![Finance chart or screenshot](Images/image9.png)
-
-
 **Figure-8:** FM 7: Agentic Loop & Coordination Failures
 
 ### **Contributing factors:**
@@ -306,8 +302,6 @@ Robustness and safety failures become even more pronounced under adversarial, mu
 ### **Why It Happens (Mechanisms – Flow Diagram)**
 
 ![Finance chart or screenshot](Images/image10.png)
-
-
 **Figure-9:** FM 8: Prompt Sensitivity & Manipulation
 
 ### **Contributing factors:**
@@ -390,9 +384,8 @@ We use three stages: (A) Grounded SFT, (B) Calibration & Abstention fine-tune, (
 * 1\[·\] indicator
 
 ![Finance chart or screenshot](Images/image11.png)
+**Figure-10 :** 3-step Training strategy
 
-
-  **Figure-10 :** 3-step Training strategy
 ### (A) Grounded Supervised Fine-Tuning (SFT)
 
 Train the model to produce answers conditioned on evidence.
@@ -426,15 +419,13 @@ This forces the model to avoid assigning high probability to an answer when the 
 
 Introduce a special **ABSTAIN** token. Train on a mix of standard supervised examples and abstention examples.
 
-Binary decision: the model chooses **ABSTAIN** vs. answer.
-
 **Train using cross-entropy**:
 
 $$
-\mathcal{L}_{\text{abst}} = -\mathbb{E} \Bigl[ 
-\mathbb{1}[L = \text{INSUFFICIENT}] \cdot \log p_\theta(\text{ABSTAIN} \mid x) 
+\mathcal{L}_{\text{abst}} = -\mathbb{E} \Biggl[ 
+\mathbb{1}[L = \text{INSUFFICIENT}] \cdot \log p_\theta(\text{ABSTAIN} \mid x)
 + \mathbb{1}[L \neq \text{INSUFFICIENT}] \cdot \log p_\theta(\neg \text{ABSTAIN} \mid x)
-\Bigr]
+\Biggr]
 $$
 
 **Inference-time abstention rule** with threshold $\tau$:
